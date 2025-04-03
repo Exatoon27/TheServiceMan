@@ -175,6 +175,7 @@ module.exports = {
         currentEmbeds[entryNumber-1].data.fields[2] = { name: 'Hora de salida', value: exitTime };
         currentEmbeds[entryNumber-1].data.fields[3] = { name: 'Sanciones', value: ""+sanctions, inline: true };
         currentEmbeds[entryNumber-1].data.fields[4] = { name: 'Tickets', value: ""+tickets, inline: true };
+        currentEmbeds[entryNumber-1].data.footer = { text: `Tiempo total: ${Math.floor((new Date(exitTime) - new Date(currentEmbeds[entryNumber-1].data.fields[1].value)) / 3600000)} horas ${Math.floor(((new Date(exitTime) - new Date(currentEmbeds[entryNumber-1].data.fields[1].value)) % 3600000) / 60000)} minutos` };
         
         // Create updated button row with NewCheckIn enabled
         const updatedRow = createButtonRow(creatorId, entryNumber, true);
