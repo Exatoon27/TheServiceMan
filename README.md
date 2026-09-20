@@ -88,12 +88,8 @@ DATABASE_URL=./database.sqlite
 - The `users` SQLite table contains **legacy** fields (`username`, `password`, `minecraft_nick`, `discord_id`).
   - These fields are legacy data structure only.
   - Do **not** treat this table as a secure authentication system.
-- No real credentials are included in this repository anymore; keep your `.env` private.
 - Runtime/local files (`.env`, SQLite database files, local config files) are git-ignored.
 
-### Manual security action still required
+## Security recommendations
 
-If a real bot token was previously committed, you must:
-
-1. **Revoke/regenerate that token** in Discord Developer Portal.
-2. If publishing repository history, **scrub the secret from Git history** separately (history rewriting is intentionally not done in this PR).
+- Keep your local `.env` file private and never commit real credentials.
