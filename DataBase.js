@@ -1,5 +1,5 @@
 const Database = require('better-sqlite3');
-const { DATABASE_URL } = require('./config.json');
+const { DATABASE_URL } = require('./config');
 
 // Open a new database connection
 const db = new Database(DATABASE_URL);

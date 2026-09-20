@@ -1,11 +1,8 @@
 {
-  "name": "tickethelper",
-  "module": "index.ts",
+  "name": "theserviceman",
+  "description": "Historical Discord moderation check-in/check-out helper bot",
+  "main": "index.js",
   "type": "commonjs",
-  "devDependencies": {
-    "@types/bun": "latest",
-    "bun-types": "^1.2.4"
-  },
   "scripts": {
     "start": "node index.js",
     "deploy": "node deploy-commands.js",
@@ -14,8 +11,5 @@
   "dependencies": {
     "better-sqlite3": "^11.8.1",
     "discord.js": "^14.18.0"
-  },
-  "peerDependencies": {
-    "typescript": "^5.8.2"
   }
 }

@@ -30,7 +30,8 @@ function createButtonRow(creatorId, entryNumber, isCheckoutComplete = false) {
     async execute(interaction) {
       const now = new Date();
       const userId = interaction.user.id;
-      const username = db.prepare('SELECT minecraft_nick FROM users WHERE discord_id = ?').get(userId).minecraft_nick;
+      const userRow = db.prepare('SELECT minecraft_nick FROM users WHERE discord_id = ?').get(userId);
+      const username = userRow?.minecraft_nick?.trim() || interaction.user.username;
       
       const embed = new EmbedBuilder()
         .setTitle(`Entrada 1`)

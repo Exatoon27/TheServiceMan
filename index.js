@@ -1,7 +1,9 @@
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const fs = require('node:fs');
 const path = require('node:path');
-const { TOKEN } = require('./config.json');
+const { DISCORD_TOKEN, assertRequiredEnv } = require('./config');
+
+assertRequiredEnv(['DISCORD_TOKEN']);
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -34,4 +36,4 @@ for (const file of eventFiles) {
 }
 
 // Login to Discord with your client's token
-client.login(TOKEN);
+client.login(DISCORD_TOKEN);

@@ -1,7 +1,9 @@
 const { REST, Routes } = require('discord.js');
-const { CLIENT_ID, TOKEN } = require('./config.json');
+const { CLIENT_ID, DISCORD_TOKEN, assertRequiredEnv } = require('./config');
 const fs = require('node:fs');
 const path = require('node:path');
+
+assertRequiredEnv(['DISCORD_TOKEN', 'CLIENT_ID']);
 
 const commands = [];
 const commandsPath = path.join(__dirname, 'commands');
@@ -13,7 +15,7 @@ for (const file of commandFiles) {
   commands.push(command.data.toJSON());
 }
 
-const rest = new REST({ version: '10' }).setToken(TOKEN);
+const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
 
 (async () => {
   try {
