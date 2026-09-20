@@ -1,5 +1,5 @@
 const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, MessageFlags } = require('discord.js');
-const { formatDate } = require('../utils/dateFormatter');
+const { formatDate, parseFormattedUtcDate } = require('../utils/dateFormatter');
 const { db } = require('../DataBase');
 
 function createButtonRow(creatorId, entryNumber, isCheckoutComplete = false) {
@@ -83,7 +83,7 @@ module.exports = {
         
         // 2. Show modal for sanctions and tickets
         const modal = new ModalBuilder()
-          .setCustomId(`checkoutmodal_${creatorId}_${entryNumber}_${(formatDate(now) + ' (UTC)').replace(" ", "-")}`)
+          .setCustomId(`checkoutmodal_${creatorId}_${entryNumber}_${now.getTime()}`)
           .setTitle(`Session Details - Entry ${entryNumber}`);
           
         const sanctionsInput = new TextInputBuilder()
@@ -154,7 +154,7 @@ module.exports = {
       const modalBase = parts[0];
       const creatorId = parts[1];
       const entryNumber = parseInt(parts[2]);
-      const exitTime = parts[3].replace("-", " ");
+      const exitTimestamp = Number(parts[3]);
       
       // Security check: Only the creator can submit the modal
       if (interaction.user.id !== creatorId) {
@@ -170,12 +170,23 @@ module.exports = {
         
         const message = interaction.message;
         const currentEmbeds = [...message.embeds.map(embed => EmbedBuilder.from(embed))];
+        const entryEmbed = currentEmbeds[entryNumber - 1];
+        const startFieldValue = entryEmbed?.data?.fields?.[1]?.value || '';
+        const startTime = parseFormattedUtcDate(startFieldValue);
+        const exitTime = new Date(exitTimestamp);
+        const isValidExitTime = !Number.isNaN(exitTime.getTime());
+        const totalMinutes = startTime && isValidExitTime
+          ? Math.max(0, Math.floor((exitTime.getTime() - startTime.getTime()) / 60000))
+          : null;
+        const formattedExitTime = isValidExitTime ? `${formatDate(exitTime)} (UTC)` : 'N/A';
         
         // Update exit time, sanctions and tickets
-        currentEmbeds[entryNumber-1].data.fields[2] = { name: 'Hora de salida', value: exitTime };
+        currentEmbeds[entryNumber-1].data.fields[2] = { name: 'Hora de salida', value: formattedExitTime };
         currentEmbeds[entryNumber-1].data.fields[3] = { name: 'Sanciones', value: ""+sanctions, inline: true };
         currentEmbeds[entryNumber-1].data.fields[4] = { name: 'Tickets', value: ""+tickets, inline: true };
-        currentEmbeds[entryNumber-1].data.footer = { text: `Tiempo total: ${Math.floor((new Date(exitTime) - new Date(currentEmbeds[entryNumber-1].data.fields[1].value)) / 3600000)} horas ${Math.floor(((new Date(exitTime) - new Date(currentEmbeds[entryNumber-1].data.fields[1].value)) % 3600000) / 60000)} minutos` };
+        currentEmbeds[entryNumber-1].data.footer = totalMinutes !== null
+          ? { text: `Tiempo total: ${Math.floor(totalMinutes / 60)} horas ${totalMinutes % 60} minutos` }
+          : { text: 'Tiempo total: N/A' };
         
         // Create updated button row with NewCheckIn enabled
         const updatedRow = createButtonRow(creatorId, entryNumber, true);

@@ -101,6 +101,8 @@ web_modules/
 # dotenv environment variable files
 
 .env
+.env.*
+!.env.example
 .env.development.local
 .env.test.local
 .env.production.local
@@ -179,3 +181,9 @@ old/
 
 # Data
 database.sqlite
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Local configuration
+config.local.json
